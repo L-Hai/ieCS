@@ -302,6 +302,16 @@ server <- function(input, output, session) {
         write.csv(matrix, file)
       }
     )
+    output$DownHeatmap <- downloadHandler(
+      filename = function() {
+        'Heatmap.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(p1)
+        dev.off()
+      }
+    )
     return(p1)
   }, 1000, 1000)
 
@@ -318,6 +328,16 @@ server <- function(input, output, session) {
     }
     hc <- p1$tree_row
     plot(hc , hang = -1)
+    output$DownHclust <- downloadHandler(
+      filename = function() {
+        'Hclust.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(plot(hc , hang = -1))
+        dev.off()
+      }
+    )
   }, 1000, 500)
 
   ### Dendrogram with user-defined number of cluster
@@ -332,6 +352,16 @@ server <- function(input, output, session) {
       p1 <- reaValScore$scoreMode3@p1
     }
     hc <- p1$tree_row
+    output$DownCutHclust <- downloadHandler(
+      filename = function() {
+        'CutHclust.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(factoextra::fviz_dend(hc, rect = TRUE, k = input$NBCutHclust,labels_track_height = 100))
+        dev.off()
+      }
+    )
     factoextra::fviz_dend(hc, rect = TRUE, k = input$NBCutHclust,labels_track_height = 100)
   },1000,500)
 
@@ -382,6 +412,25 @@ server <- function(input, output, session) {
         gp = grid::gpar(fontsize = 20)
       )
     )
+    output$DownOptHclust <- downloadHandler(
+      filename = function() {
+        'OptHclust.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(gridExtra::grid.arrange(
+          dend,
+          sil,
+          wss,
+          nrow = 3,
+          top = grid::textGrob(
+            paste0("Optimal number of supercluster is ", max_cluster),
+            gp = grid::gpar(fontsize = 20)
+          )
+        ))
+        dev.off()
+      }
+    )
   }, 1000, 1500)
 
   ### Query x Reference, assignment of superclusters with reference
@@ -423,6 +472,16 @@ server <- function(input, output, session) {
             p1 <- reaValScore$scoreMode3@p1
             hc <- p1$tree_col
             plot(hc, hang = -1)
+            output$DownHclustMode3 <- downloadHandler(
+              filename = function() {
+                'HclustMode3.pdf'
+              },
+              content = function(file) {
+                pdf(file)
+                print(plot(hc, hang = -1))
+                dev.off()
+              }
+            )
           }
         }, 1000, 500)
         output$CollectMode3 <-
@@ -494,6 +553,16 @@ server <- function(input, output, session) {
     dis.direct <- stats::as.dist(dis.direct)
     hc <- stats::hclust(dis.direct)
     plot(hc , hang = -1)
+    output$DownHclustD <- downloadHandler(
+      filename = function() {
+        'HclustD.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(plot(hc , hang = -1))
+        dev.off()
+      }
+    )
   }, 1000, 500)
 
   ### Dendrogram of user-defined number of clusters
@@ -515,6 +584,17 @@ server <- function(input, output, session) {
     par(mar = c(15,3,1,1))
     plot(d3)
     stats::rect.hclust(hc, k = input$NBCutHclustD, border = "grey")
+    output$DownCutHclustD <- downloadHandler(
+      filename = function() {
+        'CutHclustD.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(plot(d3))
+        print(stats::rect.hclust(hc, k = input$NBCutHclustD, border = "grey"))
+        dev.off()
+      }
+    )
   }, 1000, 500)
 
   ### Dendrogram of optimal number of clusters
@@ -557,6 +637,22 @@ server <- function(input, output, session) {
                               paste0("Optimal number of supercluster is ", n.opt),
                               gp = grid::gpar(fontsize = 20)
                             ))
+    output$DownOptHclustD <- downloadHandler(
+      filename = function() {
+        'OptHclustD.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(gridExtra::grid.arrange(dend,
+                                p,
+                                nrow = 2,
+                                top = grid::textGrob(
+                                  paste0("Optimal number of supercluster is ", n.opt),
+                                  gp = grid::gpar(fontsize = 20)
+                                )))
+        dev.off()
+      }
+    )
   }, 1000, 800)
 
   ###############################################################################
@@ -573,6 +669,17 @@ server <- function(input, output, session) {
     }
     plot(t1)
     ape::edgelabels(t1$edge.length, font = 0.5)
+    output$DownTreePlot1 <- downloadHandler(
+      filename = function() {
+        'TreePlot1.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(plot(t1))
+        print(ape::edgelabels(t1$edge.length, font = 0.5))
+        dev.off()
+      }
+    )
   }, 1000, 1200)
 
   ### Plot tree with selected layout
@@ -607,10 +714,27 @@ server <- function(input, output, session) {
          use.edge.length = F,
          tip.color = LabelColor,
          edge.color = EdgeColor)
-    legend('bottomleft',
+    hcp <- legend('bottomleft',
            title = 'SuperCluster',
            names(TreeGroup), col=TreeColor,
            lty=1, cex=1, lwd = 2,box.lty=0)
+    hcp
+    output$DownTreePlot2 <- downloadHandler(
+      filename = function() {
+        'TreePlot2.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(plot(t1,
+             type = input$TreeLayout, # Layout
+             use.edge.length = F,
+             tip.color = LabelColor,
+             edge.color = EdgeColor))
+        print(hcp)
+        dev.off()
+      }
+    )
+    
   }, 1000, 1000)
 
   ### Plot subtree
@@ -661,9 +785,20 @@ server <- function(input, output, session) {
       ggraph::geom_edge_link(ggplot2::aes(width = weight), alpha = 0.2) +
       ggraph::scale_edge_width(range = c(0.2, 2)) +
       ggraph::geom_node_text(ggplot2::aes(label = label), repel = TRUE) +
-      ggraph::theme_graph()
+      ggraph::theme_graph(base_family="sans")
     
+    output$DownGraphPlot <- downloadHandler(
+      filename = function() {
+        'GraphPlot.pdf'
+      },
+      content = function(file) {
+        pdf(file)
+        print(tidyplot)
+        dev.off()
+      }
+    )
     tidyplot
+
   }, 1000, 1000)
 
   ###############################################################################
