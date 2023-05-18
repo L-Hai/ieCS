@@ -66,20 +66,24 @@ ui <- navbarPage(
       tabPanel(
         'Heatmap',
         downloadButton('MDownMatrixT', 'Download: CS Matrix'),
+        downloadButton('DownHeatmap', 'Download: Heatmap'),
         plotOutput("Heatmap", 1000, 1000)
       ),
       tabPanel(
         'HierarchicalClustering_Global',
         tabsetPanel(
           tabPanel('Dendrogram',
+                   downloadButton('DownHclust', 'Download'),
                    plotOutput("Hclust", 1000, 500)),
           tabPanel(
             'OptimalClusterAssignment',
+            downloadButton('DownOptHclust', 'Download'),
             plotOutput("OptHclust", 1000, 1500)
           ),
           tabPanel(
             'CustomClusterAssignment',
             numericInput("NBCutHclust", "NumberOfSuperCluster:", 5, min = 2),
+            downloadButton('DownCutHclust', 'Download'),
             plotOutput("CutHclust",1000,500)
           ),
           tabPanel("Supercluster", tabsetPanel(
@@ -104,6 +108,7 @@ ui <- navbarPage(
         'Detail: Query x Reference',
         tabsetPanel(
           tabPanel('Dendrogram',
+                   downloadButton('DownHclustMode3', 'Download'),
                    plotOutput("HclustMode3", 1000, 500)),
           tabPanel(
             'OptimalClusterAssignment',
@@ -145,14 +150,17 @@ ui <- navbarPage(
                   'HierarchicalClustering_Direct',
                   tabsetPanel(
                     tabPanel('Dendrogram',
+                             downloadButton('DownHclustD', 'Download'),
                              plotOutput("HclustD", 1000, 500)),
                     tabPanel(
                       'OptimalClusterAssignment',
+                      downloadButton('DownOptHclustD', 'Download'),
                       plotOutput("OptHclustD", 1000, 800)
                     ),
                     tabPanel(
                       'CustomClusterAssignment',
                       numericInput("NBCutHclustD", "NumberOfSuperCluster:", 5, min = 2),
+                      downloadButton('DownCutHclustD', 'Download'),
                       plotOutput("CutHclustD", 1000, 500)
                     ),
                     tabPanel("Supercluster", tabsetPanel(
@@ -187,11 +195,14 @@ ui <- navbarPage(
                ),
                tabsetPanel(
                  tabPanel("TreePlot", tabsetPanel(
-                   tabPanel('Scored', plotOutput("TreePlot1", 1000, 1200)),
+                   tabPanel('Scored', 
+                            downloadButton('DownTreePlot1', 'Download'),
+                            plotOutput("TreePlot1", 1000, 1200)),
                    tabPanel('Layout', 
                             selectInput('TreeLayout', 'Change Layout', 
                                         c("fan", "radial", 'cladogram', "phylogram", "unrooted"),
                                        'fan'),
+                            downloadButton('DownTreePlot2', 'Download'),
                             plotOutput("TreePlot2", 1000, 1000))
                  )),
                  tabPanel("Supercluster", tabsetPanel(
@@ -236,6 +247,7 @@ ui <- navbarPage(
                           selectInput('NetworkLayout', 'Change Layout', 
                                       c('auto','fr','kk','gem', 'dh', 'graphopt','mds', 'drl', 'lgl'),
                                       'auto'),
+                          downloadButton('DownGraphPlot', 'Download'),
                           plotOutput("GraphPlot")),
                  tabPanel("Supercluster", tabsetPanel(
                    tabPanel('Text', verbatimTextOutput("GClusterList")),
