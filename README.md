@@ -36,6 +36,9 @@ devtools::install_github("L-Hai/ieCS")
 ieCS::run()
 ```
 
+Trying an online example of ieCS (for testing purpose only):
+https://ling-hai.shinyapps.io/iecs/
+
 ## Graphical user interface of ieCS
 <img src="https://user-images.githubusercontent.com/58597309/125817766-d0c29baa-1e1d-4a7d-8ffb-9a346a78b99d.png" alt="drawing" width="600"/>
 
