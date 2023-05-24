@@ -4,12 +4,6 @@ options(shiny.maxRequestSize = 30 * 1024 ^ 2) # maximum file size is 30MB
 ###############################################################################
 ### Shiny Server
 server <- function(input, output, session) {
-  ### Create working directory
-  analysisID <- session$token
-  workPath <- paste0('~/', analysisID, '/')
-  dir.create(workPath)
-  setwd(workPath)
-
   ###############################################################################
   ### Upload markers files
   observeEvent(input$MarkersSubmit, {
@@ -19,7 +13,7 @@ server <- function(input, output, session) {
       df <- data.frame(lapply(df, function(x) {
         gsub(" ", "_", x)
       }))
-      write.csv(df, paste0(workPath, 'Que.Markers.csv'), row.names = TRUE)
+      write.csv(df, 'ieCS.Que.Markers.csv', row.names = TRUE)
       updateSelectInput(session,
                         "OrderM",
                         choices = colnames(df))
@@ -36,7 +30,7 @@ server <- function(input, output, session) {
       df <- data.frame(lapply(df, function(x) {
         gsub(" ", "_", x)
       }))
-      write.csv(df, paste0(workPath, 'Ref.Markers.csv'), row.names = TRUE)
+      write.csv(df, 'ieCS.Ref.Markers.csv', row.names = TRUE)
       updateSelectInput(session,
                         "OrderMR",
                         choices = colnames(df))
@@ -75,7 +69,7 @@ server <- function(input, output, session) {
   observeEvent(input$RunScore, {
     df <-
       read.csv(
-        paste0(workPath, 'Que.Markers.csv'),
+        'ieCS.Que.Markers.csv',
         stringsAsFactors = FALSE,
         row.names = 1
       )
@@ -83,12 +77,12 @@ server <- function(input, output, session) {
     df$gene <- df[, input$GeneM]
     df$order <- df[, input$OrderM]
     df <- df[order(df$order, decreasing = input$DirectionM),]
-    write.csv(df, paste0(workPath, 'Que.Markers.csv'))
+    write.csv(df, 'ieCS.Que.Markers.csv')
     reaValScore$scoreMode1 <- scoreCS(1)
     if (!is.null(input$RefMarkersFile)) {
       dfR <-
         read.csv(
-          paste0(workPath, 'Ref.Markers.csv'),
+          'ieCS.Ref.Markers.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
@@ -96,7 +90,7 @@ server <- function(input, output, session) {
       dfR$gene <- dfR[, input$GeneMR]
       dfR$order <- dfR[, input$OrderMR]
       dfR <- dfR[order(dfR$order, decreasing = input$DirectionMR),]
-      write.csv(dfR, paste0(workPath, 'Ref.Markers.csv'))
+      write.csv(dfR, 'ieCS.Ref.Markers.csv')
       reaValScore$scoreMode2 <- scoreCS(2)
       reaValScore$scoreMode3 <- scoreCS(3)
       dfR$tag <- 'Reference'
@@ -815,7 +809,7 @@ server <- function(input, output, session) {
       umap <- data.frame(lapply(umap, function(x) {
         gsub(" ", "_", x)
       }))
-      write.csv(umap, paste0(workPath, 'umap.csv'))
+      write.csv(umap, 'ieCS.UMAP.csv')
       apath <- input$meta$datapath
       meta <-
         read.csv(apath,
@@ -824,7 +818,7 @@ server <- function(input, output, session) {
       meta <- data.frame(lapply(meta, function(x) {
         gsub(" ", "_", x)
       }))
-      write.csv(meta, paste0(workPath, 'meta.csv'))
+      write.csv(meta, 'ieCS.Meta.csv')
     },
     error = function(e) {
       stop(safeError(e))
@@ -845,13 +839,13 @@ server <- function(input, output, session) {
   observeEvent(input$metasubmit, {
     umap <-
       read.csv(
-        paste0(workPath, 'umap.csv'),
+        'ieCS.UMAP.csv',
         stringsAsFactors = FALSE,
         row.names = 1
       )
     meta <-
       read.csv(
-        paste0(workPath, 'meta.csv'),
+        'ieCS.Meta.csv',
         stringsAsFactors = FALSE,
         row.names = 1
       )
@@ -887,13 +881,13 @@ server <- function(input, output, session) {
     withProgress(message = 'Create plot', value = 0.1, {
       umap <-
         read.csv(
-          paste0(workPath, 'umap.csv'),
+          'ieCS.UMAP.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
       meta <-
         read.csv(
-          paste0(workPath, 'meta.csv'),
+          'ieCS.Meta.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
@@ -961,13 +955,13 @@ server <- function(input, output, session) {
     withProgress(message = 'Create plot', value = 0.1, {
       umap <-
         read.csv(
-          paste0(workPath, 'umap.csv'),
+          'ieCS.UMAP.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
       meta <-
         read.csv(
-          paste0(workPath, 'meta.csv'),
+          'ieCS.Meta.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
@@ -1039,13 +1033,13 @@ server <- function(input, output, session) {
     withProgress(message = 'Create plot', value = 0.1, {
       umap <-
         read.csv(
-          paste0(workPath, 'umap.csv'),
+          'ieCS.UMAP.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
       meta <-
         read.csv(
-          paste0(workPath, 'meta.csv'),
+          'ieCS.Meta.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
@@ -1109,13 +1103,13 @@ server <- function(input, output, session) {
     withProgress(message = 'Create plot', value = 0.1, {
       umap <-
         read.csv(
-          paste0(workPath, 'umap.csv'),
+          'ieCS.UMAP.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
       meta <-
         read.csv(
-          paste0(workPath, 'meta.csv'),
+          'ieCS.Meta.csv',
           stringsAsFactors = FALSE,
           row.names = 1
         )
@@ -1624,7 +1618,21 @@ server <- function(input, output, session) {
   ###############################################################################
   ### Remove uploaded files
   session$onSessionEnded(function() {
-    system(paste("rm -r", workPath))
-    rm(list = ls())
+    if(file.exists('ieCS.Que.Markers.csv')){
+      file.remove('ieCS.Que.Markers.csv')
+    }
+    
+    if(file.exists('ieCS.Ref.Markers.csv')){
+    file.remove('ieCS.Ref.Markers.csv')
+    }
+    
+    if(file.exists('ieCS.Meta.csv')){
+    file.remove('ieCS.Meta.csv')
+    }
+    
+    if(file.exists('ieCS.UMAP.csv')){
+    file.remove('ieCS.UMAP.csv')
+    }
+    
   })
 }
