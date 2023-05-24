@@ -48,13 +48,13 @@ scoreCS <- function(scoreMode) {
     message = paste0('Scoring cluster similarity on ', ModeString),
     value = 0.1,
     {
-      g1 <- read.csv('Que.Markers.csv', stringsAsFactor = F)
+      g1 <- read.csv('ieCS.Que.Markers.csv', stringsAsFactor = F)
       if (scoreMode == 1) {
         g2 <- g1
         marker.table <- g1
       }
       if (scoreMode != 1) {
-        g2 <- read.csv('Ref.Markers.csv', stringsAsFactor = F)
+        g2 <- read.csv('ieCS.Ref.Markers.csv', stringsAsFactor = F)
         g2$tag <- 'Reference'
         g2 <- g2[, c('cluster', 'gene', 'order', 'tag')]
         g1$tag <- 'Query'
